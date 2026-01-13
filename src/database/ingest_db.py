@@ -5,8 +5,8 @@ sys.path.append(str(Path(__file__).parent.parent.parent))
 
 from config.database_config import db_config
 from config.sql_schemas import create_tables_sql
-from src.utils.logger import setup_logger
 from src.utils.data_loader import DataLoader
+from src.utils.logger import setup_logger
 
 logger = setup_logger('database.ingest', log_file='database.log')
 
@@ -92,11 +92,13 @@ def main():
     loader = DataLoader()
     retail_df = loader.load_retail_data()
     customers_df = loader.extract_customers(retail_df)
+    products_df = loader.extract_products(retail_df)
+    transactions_df = loader.extract_transactions(retail_df)
     
     ingest = SQLServerIngest(loader.spark)
     ingest.test_connection()
     ingest.create_db_schema()
-    ingest.send_data_to_sqlserver(customers_df=customers_df)
+    ingest.send_data_to_sqlserver(customers_df, products_df, transactions_df)
     
     loader.close()
     logger.info("Process completed")
