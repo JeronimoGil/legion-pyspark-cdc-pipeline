@@ -1,6 +1,8 @@
 import sys
 from pathlib import Path
-from pyspark.sql import SparkSession, functions as F
+
+from pyspark.sql import SparkSession
+from pyspark.sql import functions as F
 
 sys.path.append(str(Path(__file__).parent.parent.parent))
 
@@ -80,19 +82,3 @@ class DataLoader:
     def close(self):
         logger.info("Closing Spark session")
         self.spark.stop()
-
-
-def main():
-    loader = DataLoader()
-    
-    retail_df = loader.load_retail_data()
-    
-    customers = loader.extract_customers(retail_df)
-    customers.show(5)
-    
-    loader.close()
-
-
-if __name__ == "__main__":
-    main()
-
